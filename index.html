@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Cadastro de Servidores</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f2f5;
+      padding: 30px;
+    }
+    form {
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      max-width: 400px;
+      margin: auto;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    label {
+      font-weight: bold;
+      display: block;
+      margin-top: 15px;
+    }
+    input[type="text"],
+    input[type="email"] {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    input[type="submit"] {
+      margin-top: 20px;
+      background-color: #2a9d8f;
+      color: white;
+      border: none;
+      padding: 10px;
+      width: 100%;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    input[type="submit"]:hover {
+      background-color: #21867a;
+    }
+    .mensagem {
+      text-align: center;
+      margin-top: 20px;
+      color: green;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+  <form id="formulario">
+    <h2 style="text-align: center;">Cadastro de Servidores</h2>
+    <label for="nome">Nome completo:</label>
+    <input type="text" id="nome" name="nome" required>
+
+    <label for="email">E-mail institucional:</label>
+    <input type="email" id="email" name="email" required>
+
+    <input type="submit" value="Enviar">
+  </form>
+
+  <div class="mensagem" id="mensagemSucesso" style="display: none;">
+    Obrigado! Seus dados foram enviados com sucesso.
+  </div>
+
+  <script>
+    document.getElementById('formulario').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const nome = document.getElementById('nome').value.trim();
+      const email = document.getElementById('email').value.trim().toLowerCase();
+
+      // Verifica se o e-mail já foi enviado antes (no mesmo navegador)
+      const enviados = JSON.parse(localStorage.getItem('emails_enviados') || '[]');
+      if (enviados.includes(email)) {
+        alert('Este e-mail já foi cadastrado anteriormente.');
+        return;
+      }
+
+      // Montar o link com os dados e os IDs corretos do formulário
+      const formURL = 'https://docs.google.com/forms/d/e/1FAIpQLSeePkXRkK_3h4bJiBC4AN_TUSUr9ANeojJ7rPW0akMr6tjPBw/formResponse';
+      const entryNome = 'entry.1757408082';
+      const entryEmail = 'entry.768282900';
+
+      const params = new URLSearchParams();
+      params.append(entryNome, nome);
+      params.append(entryEmail, email);
+
+      fetch(formURL, {
+        method: 'POST',
+        mode: 'no-cors',
+        body: params
+      }).then(() => {
+        enviados.push(email);
+        localStorage.setItem('emails_enviados', JSON.stringify(enviados));
+        document.getElementById('formulario').style.display = 'none';
+        document.getElementById('mensagemSucesso').style.display = 'block';
+      }).catch(() => {
+        alert('Erro ao enviar. Verifique sua conexão ou tente novamente.');
+      });
+    });
+  </script>
+
+</body>
+</html>
