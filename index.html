@@ -2,120 +2,94 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>Cadastro de Servidores</title>
+  <title>Simulador Método Soros - 3 Níveis</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      background-color: #f7f7f7;
-      padding: 30px;
-    }
-    form {
-      background-color: #fff;
       padding: 20px;
-      border-radius: 8px;
-      max-width: 400px;
+      max-width: 600px;
       margin: auto;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
     }
-    label {
-      font-weight: bold;
-      margin-top: 10px;
-      display: block;
-    }
-    input[type="text"],
-    input[type="email"] {
+    input, select, button {
+      margin: 8px 0;
+      padding: 8px;
       width: 100%;
-      padding: 10px;
-      margin-top: 5px;
-      border-radius: 5px;
-      border: 1px solid #ccc;
     }
-    input[type="submit"] {
-      margin-top: 15px;
-      width: 100%;
-      padding: 10px;
-      background-color: #2a9d8f;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      font-size: 16px;
-      cursor: pointer;
-    }
-    input[type="submit"]:hover {
-      background-color: #21867a;
-    }
-    .mensagem {
-      text-align: center;
+    .resultado {
       margin-top: 20px;
-      color: green;
-      font-weight: bold;
-      display: none;
-    }
-    .erro {
-      text-align: center;
-      color: red;
-      display: none;
-      margin-top: 20px;
+      background: #f0f0f0;
+      padding: 15px;
+      border-radius: 8px;
     }
   </style>
 </head>
 <body>
+  <h2>Simulador de Alavancagem - Método Soros (3 Níveis)</h2>
 
-  <form id="formulario">
-    <h2 style="text-align: center;">Cadastro de Servidores</h2>
+  <label for="entrada">Valor Inicial da Aposta (R$):</label>
+  <input type="number" id="entrada" value="100" min="1">
 
-    <label for="nome">Nome completo:</label>
-    <input type="text" id="nome" required>
+  <label for="retorno">Retorno por operação (%):</label>
+  <input type="number" id="retorno" value="100" min="1" max="500">
 
-    <label for="email">E-mail institucional:</label>
-    <input type="email" id="email" required>
+  <label for="resultado1">Resultado Nível 1:</label>
+  <select id="resultado1">
+    <option value="vitoria">Vitória</option>
+    <option value="derrota">Derrota</option>
+  </select>
 
-    <input type="submit" value="Enviar">
-  </form>
+  <label for="resultado2">Resultado Nível 2:</label>
+  <select id="resultado2">
+    <option value="vitoria">Vitória</option>
+    <option value="derrota">Derrota</option>
+  </select>
 
-  <div class="mensagem" id="mensagemSucesso">✔️ Dados enviados com sucesso!</div>
-  <div class="erro" id="mensagemErro">❌ Algo deu errado. Tente novamente.</div>
+  <label for="resultado3">Resultado Nível 3:</label>
+  <select id="resultado3">
+    <option value="vitoria">Vitória</option>
+    <option value="derrota">Derrota</option>
+  </select>
+
+  <button onclick="simular()">Simular</button>
+
+  <div class="resultado" id="resposta"></div>
 
   <script>
-    const formulario = document.getElementById("formulario");
-    const sucesso = document.getElementById("mensagemSucesso");
-    const erro = document.getElementById("mensagemErro");
+    function simular() {
+      const entrada = parseFloat(document.getElementById('entrada').value);
+      const retorno = parseFloat(document.getElementById('retorno').value) / 100;
+      const resultado1 = document.getElementById('resultado1').value;
+      const resultado2 = document.getElementById('resultado2').value;
+      const resultado3 = document.getElementById('resultado3').value;
 
-    formulario.addEventListener("submit", function(e) {
-      e.preventDefault();
+      let nivel1 = 0, nivel2 = 0, nivel3 = 0;
+      let acumulado = 0;
 
-      const nome = document.getElementById("nome").value.trim();
-      const email = document.getElementById("email").value.trim().toLowerCase();
-
-      const enviados = JSON.parse(localStorage.getItem("emails_enviados") || "[]");
-      if (enviados.includes(email)) {
-        alert("Este e-mail já foi cadastrado anteriormente.");
-        return;
+      if (resultado1 === 'vitoria') {
+        nivel1 = entrada + (entrada * retorno);
+        if (resultado2 === 'vitoria') {
+          nivel2 = nivel1 + (nivel1 * retorno);
+          if (resultado3 === 'vitoria') {
+            nivel3 = nivel2 + (nivel2 * retorno);
+            acumulado = nivel3 - entrada;
+          } else {
+            acumulado = nivel2 - entrada;
+          }
+        } else {
+          acumulado = nivel1 - entrada;
+        }
+      } else {
+        acumulado = -entrada;
       }
 
-      const url = "hhttps://docs.google.com/forms/d/e/1FAIpQLSeePkXRkK_3h4bJiBC4AN_TUSUr9ANeojJ7rPW0akMr6tjPBw/viewform?usp=header<iframe src="https://docs.google.com/forms/d/e/1FAIpQLSeePkXRkK_3h4bJiBC4AN_TUSUr9ANeojJ7rPW0akMr6tjPBw/viewform?embedded=true" width="640" height="552" frameborder="0" marginheight="0" marginwidth="0">Carregando…</iframe>ttps://docs.google.com/forms/d/e/1FAIpQLSeePkXRkK_3h4bJiBC4AN_TUSUr9ANeojJ7rPW0akMr6tjPBw/viewform?usp=pp_urlhttps://docs.google.com/forms/d/e/1FAIpQLSeePkXRkK_3h4bJiBC4AN_TUSUr9ANeojJ7rPW0akMr6tjPBw/viewform?usp=header";
-      const entryNome = "entry.1757408082";
-      const entryEmail = "entry.768282900";
+      let texto = `<strong>Resultado Final:</strong><br>`;
+      texto += `Nível 1: ${resultado1 === 'vitoria' ? 'Vitória ✅' : 'Derrota ❌'}<br>`;
+      texto += `Nível 2: ${resultado2 === 'vitoria' ? 'Vitória ✅' : 'Derrota ❌'}<br>`;
+      texto += `Nível 3: ${resultado3 === 'vitoria' ? 'Vitória ✅' : 'Derrota ❌'}<br>`;
+      texto += `<br><strong>Lucro/Prejuízo Final:</strong> R$ ${acumulado.toFixed(2)}`;
 
-      const formData = new FormData();
-      formData.append(entryNome, nome);
-      formData.append(entryEmail, email);
-
-      fetch(url, {
-        method: "POST",
-        mode: "no-cors",
-        body: formData
-      }).then(() => {
-        localStorage.setItem("emails_enviados", JSON.stringify([...enviados, email]));
-        formulario.style.display = "none";
-        sucesso.style.display = "block";
-        console.log("Enviado com sucesso!");
-      }).catch((err) => {
-        erro.style.display = "block";
-        console.error("Erro ao enviar:", err);
-      });
-    });
+      document.getElementById('resposta').innerHTML = texto;
+    }
   </script>
-
 </body>
 </html>
