@@ -48,7 +48,7 @@
             padding: 12px;
             border: 1px solid #ccc;
             border-radius: 5px;
-            box-sizing: border-box; /* Garante que o padding não afete a largura total */
+            box-sizing: border-box;
         }
 
         input[type="text"]:focus,
@@ -74,12 +74,24 @@
         button:hover {
             background-color: #0056b3;
         }
+        
+        .message {
+            margin-top: 15px;
+            text-align: center;
+            font-weight: bold;
+        }
+        .message.success {
+            color: green;
+        }
+        .message.error {
+            color: red;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h2>Formulário de Cadastro</h2>
-        <form action="#" method="post">
+        <form id="cadastroForm">
             <div class="form-group">
                 <label for="nome">Nome Completo</label>
                 <input type="text" id="nome" name="nome" placeholder="Digite seu nome completo" required>
@@ -100,13 +112,48 @@
                 <input type="text" id="cidade" name="cidade" placeholder="Digite sua cidade" required>
             </div>
 
-             <div class="form-group">
-                <label for="Procedimento">Procedimento</label>
-                <input type="text" id="Procedimento" name="Procedimento" placeholder="Digite Procedimento" required>
-            </div>
-
             <button type="submit">Enviar</button>
+            <div id="statusMessage" class="message"></div>
         </form>
     </div>
+
+    <script>
+        const form = document.getElementById('cadastroForm');
+        const statusMessage = document.getElementById('statusMessage');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault(); // Impede o envio padrão do formulário
+            statusMessage.textContent = 'Enviando...';
+            statusMessage.className = 'message';
+
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData.entries());
+
+            // A URL da sua API do SheetDB
+            const sheetdbURL = "https://sheetdb.io/api/v1/vr5v5x0y9am0j"; 
+
+            try {
+                const response = await fetch(sheetdbURL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ data })
+                });
+
+                if (response.ok) {
+                    statusMessage.textContent = 'Dados enviados com sucesso!';
+                    statusMessage.className = 'message success';
+                    form.reset(); // Limpa o formulário
+                } else {
+                    throw new Error('Erro ao enviar os dados. Por favor, tente novamente.');
+                }
+            } catch (error) {
+                console.error('Erro:', error);
+                statusMessage.textContent = 'Erro ao enviar os dados. Verifique a URL da API.';
+                statusMessage.className = 'message error';
+            }
+        });
+    </script>
 </body>
 </html>
